@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
-import { Backdrop, Link, StyledFormController } from "./FormControllerStyles";
+import React from "react";
+import { Backdrop, StyledFormController } from "./FormControllerStyles";
 import Form from "../Form/FormControlls/Form";
-import { AppContexProvider } from "../../Provider/GlobalContex";
-const FormControlls = () => {
+const FormControlls = ({ isEditting }) => {
   return (
     <Backdrop>
       <StyledFormController
@@ -21,7 +20,7 @@ const FormControlls = () => {
         )} */}
 
         {/*  */}
-        <Form isEdited={false} />
+        <Form isEditting={isEditting} />
       </StyledFormController>
     </Backdrop>
   );

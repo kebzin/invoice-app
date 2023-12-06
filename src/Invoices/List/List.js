@@ -1,6 +1,5 @@
-import { useTheme } from "styled-components";
 import Status from "../../Components/shared/Status/Status";
-
+import Rightarrow from "../../assets/images/icons8-right-30.png";
 import {
   ClientName,
   Hashtag,
@@ -11,32 +10,35 @@ import {
   TotalPrice,
   Uid,
 } from "./ListStyles";
-const List = ({ id, createdAt, clientName, status, total }) => {
+import { useContext } from "react";
+import { AppContexProvider } from "../../Provider/GlobalContex";
+const List = ({ createdAt, clientName, status, total, index }) => {
   // const { windowWidth } = useGlobalContex();
-  // const isDesktop = windowWidth >= 768;
-
-  const { colors } = useTheme();
-  //const isDesktop = windowWidth >= 768;
+  const { windowWidth } = useContext(AppContexProvider);
+  const isDesktop = windowWidth >= 768;
 
   return (
     <>
       <StyledList>
         <Item>
-          <Link>
+          <Link to={`/invoice/${index} `}>
             <Uid>
               <Hashtag>#</Hashtag>
               {/* you can passe the id of the invoice */}
-              {id}
+              {index}
             </Uid>
             <CreatedAt>{createdAt}</CreatedAt>
             <ClientName>{clientName}</ClientName>
-            <TotalPrice>GMD {total}</TotalPrice>
+            <TotalPrice> {total}</TotalPrice>
+
             <Status currStatus={status} $grid />
-            {/* <Arrow
-            name={'arrow-right'}
-            size={10}
-            color={colors.purple}
-             /> */}
+            {isDesktop && (
+              <img
+                src={Rightarrow}
+                style={{ marginLeft: 10 }}
+                alt="right icon"
+              />
+            )}
           </Link>
         </Item>
       </StyledList>

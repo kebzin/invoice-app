@@ -1,19 +1,23 @@
-import "./App.css";
 import Invoices from "./Invoices/Invoices";
 import Wrapper from "./Wrapper/Wrapper";
 import ProvideThemes from "./Components/shared/Provider/Provider";
 import FormControlls from "./Components/Form//FormControlls";
 import { AppContexProvider } from "./Provider/GlobalContex";
 import { useContext } from "react";
+import { Route, Routes } from "react-router-dom";
+import InvoiceView from "./InvoiceView/InvoiceView";
 
 function App() {
-  const { openForm } = useContext(AppContexProvider);
+  const { openForm, isEditting } = useContext(AppContexProvider);
 
   return (
     <ProvideThemes>
       <Wrapper>
-        {openForm && <FormControlls />}
-        <Invoices />
+        {openForm && <FormControlls isEditting={isEditting} />}
+        <Routes>
+          <Route exact path="/" element={<Invoices />} />
+          <Route path="/invoice/:id" element={<InvoiceView />} />
+        </Routes>
       </Wrapper>
     </ProvideThemes>
   );

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-// import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 // import { motion } from 'framer-motion';
 import {
   headingExtraSmall,
@@ -13,6 +13,14 @@ export const StyledList = styled.ul`
   margin-top: 1rem;
 `;
 
+export const BackArrow = styled.img`
+  widht: 30px;
+  height: 30px;
+`;
+export const RightArrow = `
+widht: 30px;
+height: 30px
+`;
 export const Item = styled.li`
   background-color: ${({ theme }) => theme.colors.bgInvoiceItem};
   border-radius: 8px;
@@ -20,10 +28,10 @@ export const Item = styled.li`
   transition: background-color 400ms ease-in-out;
 `;
 
-export const Link = styled.a`
+export const Link = styled(RouterLink)`
   display: grid;
   grid-template-rows: 1.5fr 1fr 1fr;
-  //   grid-template-areas: "uid clientname" "paymentdue status" "totalprice status";
+  grid-template-areas: "uid clientname" "paymentdue status" "totalprice status";
   justify-content: space-between;
   padding: 24px;
   border: 1px solid transparent;

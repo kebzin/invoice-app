@@ -1,7 +1,13 @@
 import ModalStatus from "./ModalStatus";
 import { StyledModal } from "./ModalStyles";
 
-const Modal = ({ buttonTitle, headheaderTitle, message, close }) => {
+const Modal = ({
+  buttonTitle,
+  headheaderTitle,
+  message,
+  close,
+  HandleInvoiceAction,
+}) => {
   return (
     <StyledModal
       aria-modal
@@ -17,6 +23,7 @@ const Modal = ({ buttonTitle, headheaderTitle, message, close }) => {
         buttonTitle={buttonTitle}
         headheaderTitle={headheaderTitle}
         message={message}
+        HandleInvoiceAction={HandleInvoiceAction}
       />
     </StyledModal>
   );

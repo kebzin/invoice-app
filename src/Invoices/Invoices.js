@@ -1,17 +1,31 @@
-// import { useGlobalContext } from "../App/context";
-// import Filter from "./Filter/Filter";
-// import List from "./List/List";
+//
+import ErrorMessage from "./ErrorMessage/ErrorMessage";
 import { useContext } from "react";
-import Button from "../Components/shared/Button/Button";
-
 import { Container, Header, Info, Title, Text } from "./InvoicesStyles";
 import List from "./List/List";
 import { AppContexProvider } from "../Provider/GlobalContex";
-import ErrorMessage from "./ErrorMessage/ErrorMessage";
+import Button from "../Components/shared/Button/Button";
 
 const Invoices = () => {
-  const { invoice, setInvoice, windowWidth, setOpenForm } =
-    useContext(AppContexProvider);
+  // convert pricer to currency format
+  const convertToCurrency = (price) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "GMD",
+    }).format(price);
+  };
+
+  const { invoice, setOpenForm } = useContext(AppContexProvider);
+  // calculate total price
+  const calculateTotal = (index) => {
+    const currentItem = invoice[index];
+    // calculate the total price based on item quantity and price
+    const total = currentItem.items.reduce(
+      (acc, item) => acc + Number(item.quantity) * Number(item.price),
+      0
+    );
+    return total;
+  };
   // states
   return (
     <Container>
@@ -29,16 +43,18 @@ const Invoices = () => {
 
       {/* map over the invoice and render the invoice list */}
 
-      {invoice.length === 0 ? (
+      {invoice?.length === 0 ? (
         <ErrorMessage />
       ) : (
-        invoice.map((item, index) => (
+        invoice?.map((item, index) => (
           <List
-            clientName={"kebba waiga"}
-            status={"pending"}
-            total={"200"}
+            key={index}
+            index={index}
+            clientName={item.clientName}
+            status={item.status}
+            total={convertToCurrency(calculateTotal(index))}
             id={"2323"}
-            createdAt={"2 days ago"}
+            createdAt={item.createAt}
           />
         ))
       )}

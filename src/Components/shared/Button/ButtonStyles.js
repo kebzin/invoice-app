@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { primaryFontStyles } from "../../../utilities/typographyStyles";
+import plusIcon from "../../../assets/images/icon-plus.svg";
 
 export const buttonDefault = css`
   ${primaryFontStyles}
@@ -93,6 +94,7 @@ const buttonNewInvoice = css`
     width: 32px;
     height: 32px;
     background-color: ${({ theme }) => theme.colors.white};
+    background-image: url("${plusIcon}");
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 50%;

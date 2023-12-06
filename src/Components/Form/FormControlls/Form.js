@@ -13,11 +13,17 @@ import List from "../List/List";
 import { useContext, useState } from "react";
 import SubmitController from "../SubmitController/SubmitController";
 import { AppContexProvider } from "../../../Provider/GlobalContex";
-import Modal from "../../Modal/Modal";
+// import Modal from "../../Modal/Modal";
+import dateToString from "../../../utilities/dateToString";
+import { useEffect } from "react";
 
-const Form = ({ isEdited }) => {
+const Form = ({ isEditting }) => {
+  // WARNING:
+  // The invoice data stored in the localStorage is in a form of an array and each item do not have an `id` property. This App is using index-based to make mutations on the data. If you are to modify the index and use your invoice ID property from your database, please visit: `Invoice`, `InvoiceView` Component where it is mapping over the data and set the `key` property to the ID you are receiving from your database.
+
   // hooks
-  const { invoice, setInvoice, setOpenForm } = useContext(AppContexProvider);
+  const { invoice, setInvoice, setOpenForm, setEditting, editIndex } =
+    useContext(AppContexProvider);
   // states
   const [clientName, setclientName] = useState("");
   const [clientPhone, setclientPhone] = useState("");
@@ -27,27 +33,30 @@ const Form = ({ isEdited }) => {
     isSubmitting: false,
     isError: { status: false, message: "" },
   });
-
   const [itemarray, setItemarray] = useState([
     { name: "", quantity: "", price: "", total: "" },
   ]);
 
-  // functions
+  useEffect(() => {
+    if (!isEditting) {
+      return;
+    }
 
+    const InvoiceToUpdate = invoice[editIndex];
+    setclientName(InvoiceToUpdate?.clientName);
+    setclientPhone(InvoiceToUpdate?.clientPhone);
+    setdescription(InvoiceToUpdate?.description);
+    setItemarray(InvoiceToUpdate?.items);
+  }, [isEditting, editIndex, invoice]);
+
+  // functions
   // handle invoice data save to the global state
   const handleSave = (event) => {
     event.preventDefault();
     setFormstate({ ...formstate, isSubmitting: true });
 
-    // creating a timestamp
-    const displayOptions = {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    };
     // creating a time stamp
     const timestamp = new Date().getTime();
-    let date = new Date(timestamp).toLocaleDateString("en-US", displayOptions);
 
     try {
       const newData = {
@@ -56,7 +65,7 @@ const Form = ({ isEdited }) => {
         description: description,
         status: "pending",
         items: itemarray,
-        createAt: date,
+        createAt: dateToString(timestamp),
       };
 
       // check if all the fields are empty
@@ -72,7 +81,12 @@ const Form = ({ isEdited }) => {
         return alert("All the field are required");
       }
 
-      // add  to the InvoiceData array in my contex store
+      // add  to the existing invoiceData array in the localstorage
+      localStorage.setItem(
+        "invoiceData",
+        JSON.stringify([...invoice, newData])
+      );
+
       setInvoice([...invoice, newData]);
 
       // handle save to database
@@ -85,16 +99,10 @@ const Form = ({ isEdited }) => {
       // });
 
       setFormstate({ ...formstate, isSubmitting: false });
+      setOpenForm(false);
 
-      // reset the form fields
-      setclientName("");
-      setclientPhone("");
-      setdescription("");
-      setItemarray([{ name: "", quantity: "", price: "", total: "" }]);
-
-      //
-
-      setModal(true);
+      // incase if error happen and we recetify the error the error state should be false to prevent any confusion
+      setFormstate({ isError: false });
     } catch (error) {
       console.log(error.message);
       setFormstate({
@@ -107,7 +115,52 @@ const Form = ({ isEdited }) => {
     }
   };
 
-  // handle update
+  // handle invoice update
+  const onUpdate = async (event) => {
+    event.preventDefault();
+    const InvoiceToUpdate = invoice[editIndex];
+    try {
+      setFormstate({ ...formstate, isSubmitting: true });
+      const newData = {
+        clientName: clientName,
+        clientPhone: clientPhone,
+        description: description,
+        status: InvoiceToUpdate?.status,
+        items: itemarray,
+        createAt: InvoiceToUpdate?.createAt,
+      };
+
+      // update  invoiceData in the localstorage base on the editIndex
+      localStorage.setItem(
+        "invoiceData",
+        JSON.stringify([
+          ...invoice.slice(0, editIndex),
+          newData,
+          ...invoice.slice(editIndex + 1),
+        ])
+      );
+      // refresh the page to see the effect
+
+      window.location.reload();
+
+      // write your logic to  make an API call to modefied the data in the database
+      //await axios.put(`${API_URL}/invoices/${InvoiceToUpdate._id}`, newData);
+
+      // incase if error happen and we recetify the error the error state should be false to prevent any confusion
+      setFormstate({ isError: false });
+      setEditting(false);
+      setOpenForm(false);
+    } catch (error) {
+      console.log(error);
+      setFormstate({
+        ...formstate,
+        isError: { status: true, message: error.message },
+      });
+    } finally {
+      // this will alway set the loding indicator to stop loading when something went wrong
+      setFormstate({ ...formstate, isSubmitting: false });
+    }
+  };
 
   return (
     <>
@@ -149,7 +202,7 @@ const Form = ({ isEdited }) => {
             />
           </InputWrapper>
           <InputWrapper>
-            <Label htmlFor="description">Project Description (optional)</Label>
+            <Label htmlFor="description">product Description (optional)</Label>
             <Input
               disabled={formstate.isSubmitting}
               type="text"
@@ -168,23 +221,30 @@ const Form = ({ isEdited }) => {
 
         {formstate.isError.status && (
           <ErrorsWrapper>
-            <Error>"formstate.isError.message"</Error>
+            <Error>{formstate.isError.message}</Error>
           </ErrorsWrapper>
         )}
       </StyledForm>
       <SubmitController
         formstate={formstate}
-        handleSave={handleSave}
+        handleSave={isEditting ? onUpdate : handleSave}
         setOpenForm={setOpenForm}
       />
-      {modal && (
+      {/* {modal && (
         <Modal
-          close={() => setModal(false)}
+          close={() => {
+            setEditting(false), setModal(false);
+          }}
+          HandleInvoiceAction={(() => setEditting(false), setModal(false))}
           buttonTitle="ok"
-          headheaderTitle="Record added"
-          message="New  Invoice saved successfully!"
+          headheaderTitle={`${isEditting ? "Update Record" : "Add New Record"}`}
+          message={`${
+            isEditting
+              ? "New record updated successfully! "
+              : "New record added successfully!"
+          }`}
         />
-      )}
+      )} */}
     </>
   );
 };

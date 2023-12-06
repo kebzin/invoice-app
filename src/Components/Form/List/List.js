@@ -14,7 +14,7 @@ import image from "../../../assets/delete.png";
 import allowOnlyNumbers from "../../../utilities/allowOnlyNumbers";
 
 const List = ({ items, setItemarray, formstate }) => {
-  // this function that takes three parameters: index (the index of the item to be updated), field (the field to be updated - "name", "quantity", or "price"), and value (the new value for the field). create a copy of the itemarray using the spread operator (...itemarray) to ensure immutability.
+  //create a copy of the itemarray using the spread operator (...itemarray) to ensure immutability.
   // then update the specific item at the given index by spreading its current properties and updating the specified field with the new value
   const handleFieldChange = (index, field, value) => {
     const updatedItems = [...items];
@@ -25,16 +25,7 @@ const List = ({ items, setItemarray, formstate }) => {
   // function to add more field
   const addItem = () => {
     // befor add more check if the previous field in the array have been filled
-    const lastItem = items[items.length - 1];
-    const isAnyFieldEmpty = Object.values(lastItem).some(
-      (field) => field === ""
-    );
-    if (!isAnyFieldEmpty) {
-      setItemarray([
-        ...items,
-        { name: "", quantity: "", price: "", total: "" },
-      ]);
-    } else return;
+    setItemarray([...items, { name: "", quantity: "", price: "", total: "" }]);
   };
   // delete item from list
   const deleteItem = (index) => {
