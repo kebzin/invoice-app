@@ -14,7 +14,7 @@ import { Link, useParams } from "react-router-dom";
 import InvoiceInfo from "../Components/InvoiceInfo/InvoiceInfo";
 
 const InvoiceView = () => {
-  const { invoice, handleItemDelete, editInvoice } =
+  const { invoice, handleItemDelete, setInvoice, editInvoice } =
     useContext(AppContexProvider);
 
   // get the id from the params
@@ -22,6 +22,17 @@ const InvoiceView = () => {
 
   // get the invoice from contex state base on index
   const InvoiceDataById = invoice[id];
+
+  // handle make as paid:
+  const handleMarkAsPaid = (id) => {
+    let newState = [...invoice];
+    newState[id].status = "paid";
+    setInvoice([newState]);
+  };
+
+  <Button $primary onClick={() => handleMarkAsPaid(id)}>
+    Mark as Paid
+  </Button>;
 
   return (
     <StyledInvoiceView>
@@ -48,12 +59,7 @@ const InvoiceView = () => {
               Delete
             </Button>
 
-            <Button
-              $primary
-              // onClick={() => toggleModal(id, 'status')}
-            >
-              Mark as Paid
-            </Button>
+            <Button $primary>Mark as Paid</Button>
           </ButtonWrapper>
         </Controller>
 

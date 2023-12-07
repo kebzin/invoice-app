@@ -1,6 +1,11 @@
+// This is a functional component that renders a backdrop and a form controller.
+// It receives a prop 'isEditting' to determine if the form is in edit mode or not.
+// It also renders a Form component inside the controller.
+
 import React from "react";
 import { Backdrop, StyledFormController } from "./FormControllerStyles";
 import Form from "../Form/FormControlls/Form";
+
 const FormControlls = ({ isEditting }) => {
   return (
     <Backdrop>
@@ -13,13 +18,6 @@ const FormControlls = ({ isEditting }) => {
         animate="visible"
         exit="exit"
       >
-        {/* {windowWidth >= 768 && (
-          <Link to="/" onClick={{}}>
-            Go back
-          </Link>
-        )} */}
-
-        {/*  */}
         <Form isEditting={isEditting} />
       </StyledFormController>
     </Backdrop>

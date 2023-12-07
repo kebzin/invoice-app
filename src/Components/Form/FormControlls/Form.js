@@ -1,3 +1,17 @@
+/**
+ * React component for creating or editing an invoice form.
+ *
+ * Summary:
+ * This Form component allows users to create new invoices or edit existing ones.
+ * It imports styled components, a List component, and a SubmitController component for managing form submission.
+ * The component uses context, state, and various hooks to manage its functionality.
+ * It includes functions for saving and updating invoice data, as well as rendering the form and its inputs.
+ *
+ * @component
+ * @param {boolean} isEditing - Flag indicating whether the form is in edit mode.
+ * @returns {JSX.Element} - Rendered Form component.
+ */
+import { useContext, useState, useEffect } from "react";
 import {
   Title,
   StyledForm,
@@ -10,25 +24,16 @@ import {
   Error,
 } from "./FormStyles";
 import List from "../List/List";
-import { useContext, useState } from "react";
 import SubmitController from "../SubmitController/SubmitController";
 import { AppContexProvider } from "../../../Provider/GlobalContex";
-// import Modal from "../../Modal/Modal";
 import dateToString from "../../../utilities/dateToString";
-import { useEffect } from "react";
 
 const Form = ({ isEditting }) => {
-  // WARNING:
-  // The invoice data stored in the localStorage is in a form of an array and each item do not have an `id` property. This App is using index-based to make mutations on the data. If you are to modify the index and use your invoice ID property from your database, please visit: `Invoice`, `InvoiceView` Component where it is mapping over the data and set the `key` property to the ID you are receiving from your database.
-
-  // hooks
   const { invoice, setInvoice, setOpenForm, setEditting, editIndex } =
     useContext(AppContexProvider);
-  // states
   const [clientName, setclientName] = useState("");
   const [clientPhone, setclientPhone] = useState("");
   const [description, setdescription] = useState("");
-  const [modal, setModal] = useState(false);
   const [formstate, setFormstate] = useState({
     isSubmitting: false,
     isError: { status: false, message: "" },
@@ -164,7 +169,7 @@ const Form = ({ isEditting }) => {
 
   return (
     <>
-      {<Title>New Invoice</Title>}
+      {<Title> {isEditting ? "Update Invoice" : "New Invoice"}</Title>}
 
       <StyledForm id="invoice-form">
         <Fieldset>
@@ -230,21 +235,6 @@ const Form = ({ isEditting }) => {
         handleSave={isEditting ? onUpdate : handleSave}
         setOpenForm={setOpenForm}
       />
-      {/* {modal && (
-        <Modal
-          close={() => {
-            setEditting(false), setModal(false);
-          }}
-          HandleInvoiceAction={(() => setEditting(false), setModal(false))}
-          buttonTitle="ok"
-          headheaderTitle={`${isEditting ? "Update Record" : "Add New Record"}`}
-          message={`${
-            isEditting
-              ? "New record updated successfully! "
-              : "New record added successfully!"
-          }`}
-        />
-      )} */}
     </>
   );
 };

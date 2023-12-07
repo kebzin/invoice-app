@@ -1,3 +1,5 @@
+// JavaScript code for App.js
+
 import Invoices from "./Invoices/Invoices";
 import Wrapper from "./Wrapper/Wrapper";
 import ProvideThemes from "./Components/shared/Provider/Provider";
@@ -11,7 +13,8 @@ function App() {
   const { openForm, isEditting } = useContext(AppContexProvider);
 
   return (
-    <ProvideThemes>
+    // if you want light mode pass a light prop to the  themeColor
+    <ProvideThemes themeColor={"dark"}>
       <Wrapper>
         {openForm && <FormControlls isEditting={isEditting} />}
         <Routes>
